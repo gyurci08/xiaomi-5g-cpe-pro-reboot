@@ -1,0 +1,34 @@
+name: xiaomi-5g-cpe-pro-reboot
+services:
+  selenium:
+    image: selenium/standalone-chrome:latest
+    restart: no
+    shm_size: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: no
+    environment:
+      # These variables are now sourced from the .env file
+      - SELENIUM_REMOTE_URL=http://selenium:4444/wd/hub
+      - ROUTER_ADMIN_URL=${ROUTER_ADMIN_URL}
+      - ROUTER_PASSWORD=${ROUTER_PASSWORD}
+      - ROUTER_IP=${ROUTER_IP}
+      # Optional: Set a pause-on-error for debugging (in seconds)
+      - DEBUG_PAUSE_SECONDS=30
+      # The directory inside the container to save error files to
+      - ERROR_ARTIFACTS_DIR=/app/errors
+    depends_on:
+      selenium:
+        condition: service_healthy
+    volumes:
+      # Mounts the named volume to the path defined in ERROR_ARTIFACTS_DIR
+      - error_output:/app/errors
+volumes:
+  error_output:
