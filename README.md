@@ -102,5 +102,5 @@ Using `--exit-code-from` makes the cron job setup much cleaner and more reliable
 
     ```
     # Reboot the Xiaomi router every day at 6:00 AM
-    0 6 * * * docker compose up -f /path/to/your/xiaomi-reboot --force-recreate --exit-code-from app >> /var/log/xiaomi-reboot.log 2>&1
+    0 6 * * * docker compose -f ../xiaomi-5g-cpe-pro-reboot/compose.yml up --force-recreate --exit-code-from app >> /var/log/xiaomi-reboot.log 2>&1
     ```
